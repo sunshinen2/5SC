@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>审图大侦探：结局由你定</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'PingFang SC', sans-serif;
+        }
+
+        .game-title {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            text-shadow: 2px 2px 0px #ffde7d;
+        }
+
+        .option-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            perspective: 1000px;
+        }
+
+        .option-card:active {
+            transform: scale(0.95);
+        }
+
+        .correct-anim {
+            animation: celebrate 0.5s ease;
+            background-color: #d1fae5 !important;
+            border-color: #10b981 !important;
+        }
+
+        .wrong-anim {
+            animation: shake 0.4s ease;
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        @keyframes celebrate {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .hidden { display: none; }
+
+        .badge-glow {
+            box-shadow: 0 0 20px rgba(255, 222, 125, 0.6);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-3xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden relative">
+        <!-- Header -->
+        <div class="bg-yellow-400 p-8 text-center border-b-4 border-yellow-500">
+            <h1 class="game-title text-5xl text-blue-900 mb-2">🕵️‍♂️ 结局大侦探</h1>
+            <p class="text-blue-800 text-xl font-bold">图⑥的问号里隐藏了什么秘密？</p>
+        </div>
+
+        <div class="p-8">
+            <div id="game-zone">
+                <p class="text-center text-gray-600 mb-8 font-medium bg-gray-100 py-3 rounded-full text-xl">找出所有【合理】的结局，解锁你的勋章！</p>
+                
+                <div class="grid gap-6" id="options-container">
+                    <!-- Option A -->
+                    <div onclick="verify(this, true, '哥哥的耐心沟通感动了妹妹，太棒了！')" class="option-card group relative overflow-hidden bg-white border-4 border-gray-100 p-6 rounded-2xl shadow-sm hover:shadow-md cursor-pointer">
+                        <div class="flex items-center space-x-6">
+                            <span class="text-3xl font-black text-gray-300 group-hover:text-yellow-400 transition-colors">A</span>
+                            <p class="text-gray-700 font-bold text-xl leading-relaxed">哥哥耐心解释妈妈生病的事，妹妹懂事地牵起哥哥的手回家。</p>
+                        </div>
+                    </div>
+
+                    <!-- Option B -->
+                    <div onclick="verify(this, true, '合理的交换！妹妹觉得明天的约定很值得。')" class="option-card group relative overflow-hidden bg-white border-4 border-gray-100 p-6 rounded-2xl shadow-sm hover:shadow-md cursor-pointer">
+                        <div class="flex items-center space-x-6">
+                            <span class="text-3xl font-black text-gray-300 group-hover:text-yellow-400 transition-colors">B</span>
+                            <p class="text-gray-700 font-bold text-xl leading-relaxed">哥哥答应第二天带她去游乐场玩，妹妹才依依不舍地跟着哥哥离开。</p>
+                        </div>
+                    </div>
+
+                    <!-- Option C -->
+                    <div onclick="verify(this, false, '哎呀！哥哥虽然急，但绝不会丢下年幼的妹妹不管哦。')" class="option-card group relative overflow-hidden bg-white border-4 border-gray-100 p-6 rounded-2xl shadow-sm hover:shadow-md cursor-pointer">
+                        <div class="flex items-center space-x-6">
+                            <span class="text-3xl font-black text-gray-300 group-hover:text-yellow-400 transition-colors">C</span>
+                            <p class="text-gray-700 font-bold text-xl leading-relaxed">哥哥气得火冒三丈，丢下妹妹独自回家，让妹妹在操场哭。</p>
+                        </div>
+                    </div>
+
+                    <!-- Option D -->
+                    <div onclick="verify(this, true, '邻里互助是很温馨的情节，完全合理！')" class="option-card group relative overflow-hidden bg-white border-4 border-gray-100 p-6 rounded-2xl shadow-sm hover:shadow-md cursor-pointer">
+                        <div class="flex items-center space-x-6">
+                            <span class="text-3xl font-black text-gray-300 group-hover:text-yellow-400 transition-colors">D</span>
+                            <p class="text-gray-700 font-bold text-xl leading-relaxed">热心的邻居阿姨经过，帮忙安慰劝说，最后妹妹乖乖地跟哥哥回家。</p>
+                        </div>
+                    </div>
+
+                    <!-- Option E -->
+                    <div onclick="verify(this, false, '不行哦，这样生病的妈妈就没人照顾了，故事逻辑不通。')" class="option-card group relative overflow-hidden bg-white border-4 border-gray-100 p-6 rounded-2xl shadow-sm hover:shadow-md cursor-pointer">
+                        <div class="flex items-center space-x-6">
+                            <span class="text-3xl font-black text-gray-300 group-hover:text-yellow-400 transition-colors">E</span>
+                            <p class="text-gray-700 font-bold text-xl leading-relaxed">妹妹玩到了深夜，哥哥一直陪着她，完全忘记了妈妈生病的事。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievement Section -->
+            <div id="victory-zone" class="hidden mt-10 text-center animate-bounce">
+                <div class="inline-block p-6 bg-yellow-400 rounded-full badge-glow mb-4">
+                    <span class="text-5xl">🏅</span>
+                </div>
+                <h2 class="text-3xl font-bold text-blue-900 mb-2">恭喜！解锁【神笔马良】勋章</h2>
+                <p class="text-blue-700 text-xl">你已经确定了故事的结局，如何写一个精彩的结尾？：</p>
+            </div>
+
+            <!-- Strategy Section -->
+            <div id="strategy-box" class="hidden mt-8 space-y-6">
+                <div class="bg-blue-600 p-8 rounded-3xl text-white shadow-inner">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center border-b border-blue-400 pb-2">
+                        <span class="mr-3">💡</span> 收尾的方式：
+                    </h3>
+                    <div class="grid gap-6 text-xl">
+                        <div class="bg-blue-500 bg-opacity-30 p-5 rounded-xl border border-blue-400">
+                            <p class="font-bold text-yellow-300 mb-2">✨ 动作细节：</p>
+                            <p>回到家后，妹妹有没有端一杯温水给妈妈？</p>
+                        </div>
+                        <div class="bg-blue-500 bg-opacity-30 p-5 rounded-xl border border-blue-400">
+                            <p class="font-bold text-yellow-300 mb-2">✨ 妈妈的反应：</p>
+                            <p>例如：苍白的脸上露出了欣慰的笑容。妈妈如何夸兄妹俩？</p>
+                        </div>
+                        <div class="bg-blue-500 bg-opacity-30 p-5 rounded-xl border border-blue-400">
+                            <p class="font-bold text-yellow-300 mb-2">✨ 道理：</p>
+                            <p>小明明白了责任的重量，妹妹学会了体谅他人。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let correctCount = 0;
+        const totalCorrectNeeded = 3;
+
+        function verify(el, isCorrect, feedback) {
+            if (el.classList.contains('correct-anim') || el.classList.contains('wrong-anim')) return;
+
+            if (isCorrect) {
+                el.classList.add('correct-anim');
+                correctCount++;
+                if (correctCount === totalCorrectNeeded) {
+                    launchCelebration();
+                }
+            } else {
+                el.classList.add('wrong-anim');
+                setTimeout(() => {
+                    el.classList.remove('wrong-anim');
+                }, 400);
+            }
+            
+            console.log(feedback);
+        }
+
+        function launchCelebration() {
+            confetti({
+                particleCount: 200,
+                spread: 80,
+                origin: { y: 0.6 },
+                colors: ['#fbbf24', '#3b82f6', '#10b981']
+            });
+
+            setTimeout(() => {
+                document.getElementById('victory-zone').classList.remove('hidden');
+                document.getElementById('strategy-box').classList.remove('hidden');
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            }, 500);
+        }
+    </script>
+</body>
+</html>
