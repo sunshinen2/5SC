@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>环节三：描写技巧升级</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .flashcard-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 50;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+        }
+        .flashcard {
+            transform: scale(0.5);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .flashcard.active { transform: scale(1); }
+        .word-badge:hover { transform: translateY(-5px); cursor: pointer; filter: brightness(1.05); }
+        
+        /* FEAST 专用高亮颜色逻辑 */
+        .hl-green { background-color: #d1fae5; color: #065f46; padding: 0 4px; border-radius: 4px; font-weight: bold; } /* Feeling 感受 */
+        .hl-orange { background-color: #ffedd5; color: #9a3412; padding: 0 4px; border-radius: 4px; font-weight: bold; } /* Expression 表情 */
+        .hl-yellow { background-color: #fef9c3; color: #854d0e; padding: 0 4px; border-radius: 4px; font-weight: bold; } /* Action 动作 */
+        .hl-blue { background-color: #dbeafe; color: #1e40af; padding: 0 4px; border-radius: 4px; font-weight: bold; } /* Speech 语言 */
+    </style>
+</head>
+<body class="bg-indigo-50 p-6">
+    <!-- 闪卡遮罩层 -->
+    <div id="overlay" class="flashcard-overlay" onclick="closeCard()">
+        <div class="flashcard bg-white p-12 rounded-[3rem] shadow-2xl max-w-xl w-full text-center border-t-[12px] border-indigo-500" onclick="event.stopPropagation()">
+            <div class="text-indigo-400 text-2xl mb-4 font-mono tracking-widest" id="card-pinyin">pīn yīn</div>
+            <h2 class="text-7xl font-black text-indigo-900 mb-8" id="card-word">词语</h2>
+            <div class="space-y-6">
+                <div class="bg-blue-50 p-6 rounded-2xl">
+                    <p class="text-blue-500 text-sm font-black uppercase tracking-[0.2em] mb-2">English</p>
+                    <p class="text-3xl text-blue-900 font-bold" id="card-en">Translation</p>
+                </div>
+                <div class="bg-green-50 p-6 rounded-2xl">
+                    <p class="text-green-500 text-sm font-black uppercase tracking-[0.2em] mb-2">华文解释</p>
+                    <p class="text-2xl text-green-900 font-medium leading-relaxed" id="card-cn">Meaning</p>
+                </div>
+            </div>
+            <button onclick="closeCard()" class="mt-10 bg-indigo-600 text-white px-12 py-5 rounded-full text-2xl font-black shadow-lg hover:bg-indigo-700 transition-colors">我知道了</button>
+        </div>
+    </div>
+
+    <div class="max-w-3xl mx-auto bg-white rounded-3xl shadow-xl p-8">
+        <h1 class="text-4xl font-extrabold text-indigo-900 mb-8 border-b-4 border-indigo-200 pb-4 text-center">
+            🖼️ 图①分析：描写妈妈的病态
+        </h1>
+        
+        <!-- 核心词语部分 -->
+        <div class="mb-10">
+            <h2 class="font-bold text-indigo-700 mb-6 text-2xl flex items-center">
+                1. 核心词语（点击查看大闪卡 💡）
+            </h2>
+            <div class="flex flex-wrap gap-4">
+                <div onclick="showCard('脸色苍白', 'liǎn sè cāng bái', 'Pale face', '脸上没有血色，通常指生病。')" class="word-badge px-6 py-3 bg-orange-100 text-orange-700 rounded-full text-2xl font-black border-2 border-orange-200 transition-all shadow-sm">脸色苍白</div>
+                <div onclick="showCard('眉头紧锁', 'méi tóu jǐn suǒ', 'Frowning', '眉毛紧紧锁在一起，感到难受或忧虑。')" class="word-badge px-6 py-3 bg-orange-100 text-orange-700 rounded-full text-2xl font-black border-2 border-orange-200 transition-all shadow-sm">眉头紧锁</div>
+                <div onclick="showCard('惴惴不安', 'zhuì zhuì bù ān', 'Anxious / Uneasy', '形容因害怕或担心而心里不安。')" class="word-badge px-6 py-3 bg-green-100 text-green-700 rounded-full text-2xl font-black border-2 border-green-200 transition-all shadow-sm">惴惴不安</div>
+                <div onclick="showCard('浑身无力', 'hún shēn wú lì', 'Weak / Exhausted', '全身没有力气，非常虚弱。')" class="word-badge px-6 py-3 bg-green-100 text-green-700 rounded-full text-2xl font-black border-2 border-green-200 transition-all shadow-sm">浑身无力</div>
+                <div onclick="showCard('虚弱', 'xū ruò', 'Frail / Feeble', '身体不强健，疲惫没精神。')" class="word-badge px-6 py-3 bg-green-100 text-green-700 rounded-full text-2xl font-black border-2 border-green-200 transition-all shadow-sm">虚弱</div>
+                <div onclick="showCard('心急如焚', 'xīn jí rú fén', 'Anxious / Burning with impatience', '心里急得像着了火一样，形容非常焦急。')" class="word-badge px-6 py-3 bg-green-100 text-green-700 rounded-full text-2xl font-black border-2 border-green-200 transition-all shadow-sm">心急如焚</div>
+            </div>
+        </div>
+
+        <div class="space-y-10">
+            <h2 class="font-bold text-indigo-700 text-2xl font-black">2. 写法对比：FEAST 升级版</h2>
+            
+            <div class="p-6 bg-slate-100 rounded-2xl border-l-8 border-slate-400">
+                <p class="text-sm text-slate-500 font-black mb-2 uppercase tracking-widest">[ 普通级别 ]</p>
+                <p class="text-xl text-slate-700 leading-relaxed font-medium">
+                    小明推开房门，看到妈妈生病躺在床上。妈妈说她很不舒服，小明听了很着急。
+                </p>
+            </div>
+
+            <div class="p-6 bg-indigo-50 rounded-2xl border-l-8 border-indigo-500 shadow-md">
+                <p class="text-sm text-indigo-600 font-black mb-2 uppercase tracking-widest">[ 高华级别 (FEAST 描写法) ]</p>
+                <p class="text-2xl text-indigo-900 leading-snug font-bold">
+                    小明<span class="hl-yellow">轻手轻脚地推开房门</span>，只见妈妈<span class="hl-orange">脸色苍白</span>，正<span class="hl-orange">眉头紧锁</span>地躺在床上。看到这一幕，小明感到<span class="hl-green">惴惴不安</span>，他一边<span class="hl-yellow">快步走到妈妈的床边</span>，一边紧张地<span class="hl-blue">问道：”妈妈，您还好吗？“</span>。妈妈<span class="hl-green">浑身无力</span>，轻轻地点了点头。他放下书包，<span class="hl-yellow">用手背摸了摸妈妈的额头</span>，还好她没有发烧。望着妈妈虚弱的样子，小明<span class="hl-green">心急如焚</span>。
+                </p>
+            </div>
+
+            <div class="bg-indigo-900 text-white p-8 rounded-3xl shadow-2xl">
+                <h3 class="text-2xl font-bold mb-6 font-mono border-b border-indigo-700 pb-2">🔍 FEAST 运用解析：</h3>
+                <div class="space-y-4 text-xl font-medium">
+                    <p><span class="text-emerald-400 font-black">Feeling (感受):</span> <span class="text-emerald-200">惴惴不安、浑身无力、心急如焚</span></p>
+                    <p><span class="text-orange-400 font-black">Expression (表情):</span> <span class="text-orange-200">脸色苍白、眉头紧锁</span></p>
+                    <p><span class="text-yellow-400 font-black">Action (动作):</span> <span class="text-yellow-200">轻手轻脚推门、快步走到床边、摸了摸额头</span></p>
+                    <p><span class="text-blue-400 font-black">Speech (语言):</span> <span class="text-blue-200">问道：“妈妈，您还好吗？”</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showCard(word, pinyin, en, cn) {
+            document.getElementById('card-word').innerText = word;
+            document.getElementById('card-pinyin').innerText = pinyin;
+            document.getElementById('card-en').innerText = en;
+            document.getElementById('card-cn').innerText = cn;
+            
+            const overlay = document.getElementById('overlay');
+            overlay.style.display = 'flex';
+            setTimeout(() => {
+                overlay.querySelector('.flashcard').classList.add('active');
+            }, 10);
+
+            speak(word);
+        }
+
+        function closeCard() {
+            const overlay = document.getElementById('overlay');
+            overlay.querySelector('.flashcard').classList.remove('active');
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 300);
+        }
+
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'zh-CN';
+            utterance.rate = 0.8;
+            window.speechSynthesis.speak(utterance);
+        }
+    </script>
+</body>
+</html>
